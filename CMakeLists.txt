@@ -54,7 +54,7 @@ endif()
 #
 include("cmake/CheckGit.cmake")
 
-include(${CMAKE_SOURCE_DIR}/cmake/SetEnv.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/SetEnv.cmake)
 
 include_directories("libsauros")
 
@@ -63,53 +63,53 @@ if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 set(SAUROS_SOURCES
-   ${CMAKE_SOURCE_DIR}/libsauros/environment.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/cell.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/driver.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/profiler.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/capi/capi.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/RLL/rll_wrapper.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/system/system.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/front/parser.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/package/package.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/processor/processor.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/processor/processor_load_package.cpp
-   ${CMAKE_SOURCE_DIR}/libsauros/processor/processor_builtins.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/environment.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/cell.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/driver.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/profiler.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/capi/capi.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/RLL/rll_wrapper.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/system/system.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/front/parser.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/package/package.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/processor/processor.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/processor/processor_load_package.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/processor/processor_builtins.cpp
 )
 
 set(PARALLEL_HASHMAP_HEADERS
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/btree.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/meminfo.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_base.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_bits.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_config.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_dump.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_fwd_decl.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_utils.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/btree.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/meminfo.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_base.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_bits.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_config.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_dump.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_fwd_decl.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_utils.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/parallel_hashmap/phmap.hpp
 )
 
 set(LINENOISE_HEADERS
-   ${CMAKE_SOURCE_DIR}/libsauros/linenoise/linenoise.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/linenoise/linenoise.hpp
 )
 
 set(HEADERS
-   ${CMAKE_SOURCE_DIR}/libsauros/profiler.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/format.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/front/parser.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/driver.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/rang.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/capi/capi.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/RLL/rll_wrapper.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/system/system.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/package/package.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/processor/processor.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/environment.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/cell.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/types.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/version.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/sauros.hpp
-   ${CMAKE_SOURCE_DIR}/libsauros/RLL/RLL.h
+   ${PROJECT_SOURCE_DIR}/libsauros/profiler.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/format.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/front/parser.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/driver.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/rang.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/capi/capi.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/RLL/rll_wrapper.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/system/system.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/package/package.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/processor/processor.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/environment.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/cell.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/types.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/version.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/sauros.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/RLL/RLL.h
    ${PARALLEL_HASHMAP_HEADERS}
    ${LINENOISE_HEADERS}
 )
@@ -121,12 +121,12 @@ set(SOURCES
 #
 # Configure Library
 #
-include(${CMAKE_SOURCE_DIR}/cmake/LibraryConfig.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/LibraryConfig.cmake)
 
 #
 # Configure Install
 #
-include(${CMAKE_SOURCE_DIR}/cmake/InstallConfig.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/InstallConfig.cmake)
 
 #
 # Tests

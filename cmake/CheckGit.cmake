@@ -8,7 +8,7 @@ execute_process(
    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-add_custom_target(AlwaysCheckGit COMMAND ${CMAKE_COMMAND}
+add_custom_target(Libsauros-check-git COMMAND ${CMAKE_COMMAND}
    -DRUN_CHECK_GIT_VERSION=1
    -Dpre_configure_dir=${pre_configure_dir}
    -Dpost_configure_file=${post_configure_dir}
@@ -18,10 +18,10 @@ add_custom_target(AlwaysCheckGit COMMAND ${CMAKE_COMMAND}
 )
 
 # This command is used to save git commit hash.
-file(WRITE ${CMAKE_BINARY_DIR}/git-state.txt ${GIT_HASH})
+file(WRITE ${PROJECT_BINARY_DIR}/git-state.txt ${GIT_HASH})
 # This following command is used to retreive the git commit hash from the file.
-if (EXISTS ${CMAKE_BINARY_DIR}/git-state.txt)
-   file(STRINGS ${CMAKE_BINARY_DIR}/git-state.txt CONTENT)
+if (EXISTS ${PROJECT_BINARY_DIR}/git-state.txt)
+   file(STRINGS ${PROJECT_BINARY_DIR}/git-state.txt CONTENT)
    LIST(GET CONTENT 0 var)
    set(build_hash "\"${var}\"")
    add_compile_definitions(COMPILED_GIT_HASH=${build_hash})
