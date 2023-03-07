@@ -2,7 +2,7 @@
   <img src="https://img.icons8.com/ios-glyphs/90/null/lizard.png"/>
 </p>
 
-#libsauros
+# libsauros
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/sauros/libsauros/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/sauros/libsauros/tree/main)
 
