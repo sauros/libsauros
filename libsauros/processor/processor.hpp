@@ -1,13 +1,13 @@
 #ifndef SAUROS_PROCESSOR_HPP
 #define SAUROS_PROCESSOR_HPP
 
-#include "sauros/builtin_encodings.hpp"
-#include "sauros/cell.hpp"
-#include "sauros/environment.hpp"
-#include "sauros/exceptions.hpp"
-#include "sauros/system/system.hpp"
+#include "libsauros/builtin_encodings.hpp"
+#include "libsauros/cell.hpp"
+#include "libsauros/environment.hpp"
+#include "libsauros/exceptions.hpp"
+#include "libsauros/system/system.hpp"
 
-#include "sauros/types.hpp"
+#include "libsauros/types.hpp"
 #include <array>
 #include <exception>
 #include <functional>

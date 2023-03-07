@@ -1,5 +1,5 @@
 #include "cell.hpp"
-#include "sauros/processor/processor.hpp"
+#include "libsauros/processor/processor.hpp"
 #include <sstream>
 
 #include <iostream>

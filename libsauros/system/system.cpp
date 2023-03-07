@@ -1,7 +1,7 @@
 #include "system.hpp"
 #include <cstdlib>
 
-#include "sauros/profiler.hpp"
+#include "libsauros/profiler.hpp"
 #include <filesystem>
 #include <iostream>
 

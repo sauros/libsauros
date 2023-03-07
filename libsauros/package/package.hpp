@@ -1,8 +1,8 @@
 #ifndef SAUROS_PACKAGE_HPP
 #define SAUROS_PACKAGE_HPP
 
-#include "sauros/environment.hpp"
-#include "sauros/system/system.hpp"
+#include "libsauros/environment.hpp"
+#include "libsauros/system/system.hpp"
 #include <memory>
 #include <string>
 #include <vector>

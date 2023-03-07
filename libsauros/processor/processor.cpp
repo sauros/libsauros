@@ -1,6 +1,6 @@
 #include "processor.hpp"
 
-#include "sauros/profiler.hpp"
+#include "libsauros/profiler.hpp"
 #include <iostream>
 #include <sstream>
 

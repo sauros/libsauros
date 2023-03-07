@@ -1,9 +1,9 @@
 #include "package.hpp"
 
-#include "sauros/driver.hpp"
-#include "sauros/format.hpp"
-#include "sauros/processor/processor.hpp"
-#include "sauros/profiler.hpp"
+#include "libsauros/driver.hpp"
+#include "libsauros/format.hpp"
+#include "libsauros/processor/processor.hpp"
+#include "libsauros/profiler.hpp"
 
 #include <filesystem>
 #include <iostream>

@@ -1,7 +1,7 @@
 #ifndef SAUROS_RLL_WRAPPER
 #define SAUROS_RLL_WRAPPER
 
-#include "sauros/parallel_hashmap/phmap.hpp"
+#include "libsauros/parallel_hashmap/phmap.hpp"
 #include <memory>
 #include <string>
 

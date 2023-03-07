@@ -4,7 +4,7 @@
 #include <tuple>
 #include <vector>
 
-#include "builtin_encodings.hpp"
+#include "libsauros/builtin_encodings.hpp"
 
 namespace sauros {
 namespace parser {

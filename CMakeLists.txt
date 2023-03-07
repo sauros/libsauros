@@ -56,60 +56,60 @@ include("cmake/CheckGit.cmake")
 
 include(${CMAKE_SOURCE_DIR}/cmake/SetEnv.cmake)
 
-include_directories("sauros")
+include_directories("libsauros")
 
 if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-DNDEBUG)
 endif()
 
 set(SAUROS_SOURCES
-   ${CMAKE_SOURCE_DIR}/sauros/environment.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/cell.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/driver.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/profiler.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/capi/capi.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/RLL/rll_wrapper.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/system/system.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/front/parser.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/package/package.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/processor/processor.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/processor/processor_load_package.cpp
-   ${CMAKE_SOURCE_DIR}/sauros/processor/processor_builtins.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/environment.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/cell.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/driver.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/profiler.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/capi/capi.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/RLL/rll_wrapper.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/system/system.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/front/parser.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/package/package.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/processor/processor.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/processor/processor_load_package.cpp
+   ${CMAKE_SOURCE_DIR}/libsauros/processor/processor_builtins.cpp
 )
 
 set(PARALLEL_HASHMAP_HEADERS
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/btree.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/meminfo.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/phmap_base.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/phmap_bits.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/phmap_config.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/phmap_dump.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/phmap_fwd_decl.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/phmap_utils.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/parallel_hashmap/phmap.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/btree.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/meminfo.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_base.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_bits.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_config.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_dump.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_fwd_decl.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap_utils.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/parallel_hashmap/phmap.hpp
 )
 
 set(LINENOISE_HEADERS
-   ${CMAKE_SOURCE_DIR}/sauros/linenoise/linenoise.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/linenoise/linenoise.hpp
 )
 
 set(HEADERS
-   ${CMAKE_SOURCE_DIR}/sauros/profiler.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/format.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/front/parser.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/driver.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/rang.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/capi/capi.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/RLL/rll_wrapper.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/system/system.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/package/package.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/processor/processor.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/environment.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/cell.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/types.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/version.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/sauros.hpp
-   ${CMAKE_SOURCE_DIR}/sauros/RLL/RLL.h
+   ${CMAKE_SOURCE_DIR}/libsauros/profiler.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/format.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/front/parser.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/driver.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/rang.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/capi/capi.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/RLL/rll_wrapper.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/system/system.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/package/package.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/processor/processor.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/environment.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/cell.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/types.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/version.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/sauros.hpp
+   ${CMAKE_SOURCE_DIR}/libsauros/RLL/RLL.h
    ${PARALLEL_HASHMAP_HEADERS}
    ${LINENOISE_HEADERS}
 )

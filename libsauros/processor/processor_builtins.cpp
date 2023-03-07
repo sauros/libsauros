@@ -1,12 +1,12 @@
 #include "processor.hpp"
-#include "sauros/driver.hpp"
-#include "sauros/profiler.hpp"
+#include "libsauros/driver.hpp"
+#include "libsauros/profiler.hpp"
 #include <algorithm>
 #include <filesystem>
 #include <iostream>
 #include <limits>
 
-#include "sauros/format.hpp"
+#include "libsauros/format.hpp"
 
 namespace sauros {
 
