@@ -2,9 +2,9 @@
 #define SAUROS_PARSER_HPP
 
 // #include "ast.hpp"
-#include "sauros/cell.hpp"
-#include "sauros/environment.hpp"
-#include "sauros/types.hpp"
+#include "libsauros/cell.hpp"
+#include "libsauros/environment.hpp"
+#include "libsauros/types.hpp"
 #include <string>
 
 namespace sauros {

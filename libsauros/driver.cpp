@@ -4,8 +4,8 @@
 #include <csignal>
 #include <filesystem>
 #include <iostream>
-#include <sauros/linenoise/linenoise.hpp>
-#include <sauros/system/system.hpp>
+#include "libsauros/linenoise/linenoise.hpp"
+#include "libsauros/system/system.hpp"
 #include <unordered_map>
 
 namespace sauros {

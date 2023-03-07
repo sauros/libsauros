@@ -1,8 +1,8 @@
 #ifndef SAUROS_EXCEPTIONS_HPP
 #define SAUROS_EXCEPTIONS_HPP
 
-#include "sauros/cell.hpp"
-#include "sauros/environment.hpp"
+#include "libsauros/cell.hpp"
+#include "libsauros/environment.hpp"
 #include <exception>
 
 namespace sauros {
