@@ -39,7 +39,7 @@ set(HEADERS ${HEADERS} ${PROJECT_SOURCE_DIR}/libsauros/version.hpp)
 #  DESTINATION "${INSTALL_INCLUDE_DIR}/${LIBRARY_FOLDER}" )
 install(
     DIRECTORY
-    "${CMAKE_SOURCE_DIR}/libsauros"
+    "${PROJECT_SOURCE_DIR}/libsauros"
     DESTINATION
     "${INSTALL_INCLUDE_DIR}"
     FILES_MATCHING
