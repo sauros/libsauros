@@ -30,9 +30,9 @@ install(TARGETS ${LIBRARY_NAME}
   COMPONENT dev)
 
 # Create 'version.h'
-configure_file(${CMAKE_SOURCE_DIR}/libsauros/generate/version.hpp.in
-  "${CMAKE_SOURCE_DIR}/libsauros/version.hpp" @ONLY)
-set(HEADERS ${HEADERS} ${CMAKE_SOURCE_DIR}/libsauros/version.hpp)
+configure_file(${PROJECT_SOURCE_DIR}/libsauros/generate/version.hpp.in
+  "${PROJECT_SOURCE_DIR}/libsauros/version.hpp" @ONLY)
+set(HEADERS ${HEADERS} ${PROJECT_SOURCE_DIR}/libsauros/version.hpp)
 
 # Install headers
 #install(FILES ${HEADERS}
