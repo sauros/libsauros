@@ -22,7 +22,7 @@ void processor_c::load_package(cell_ptr cell, location_s *location,
   profiler_c::get_profiler()->hit("processor_c::load_package");
 #endif
 
-  auto target = cell->data_as_str();
+  auto target = cell->as_string();
   // Check to see if its already loaded
   if (env->package_loaded(target)) {
     return;

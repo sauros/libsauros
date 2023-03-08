@@ -12,9 +12,6 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include <variant>
-
-#include <iostream>
 
 namespace sauros {
 
@@ -84,7 +81,7 @@ public:
   cell_c(cell_type_e type, const cell_string_t data) : type(type) {
     assert(type != cell_type_e::INTEGER);
     assert(type != cell_type_e::REAL);
-    this->data.s = new std::string(data);
+    this->string = data;
   }
 
   //! \brief Create a standard cell
@@ -92,7 +89,7 @@ public:
   //! \param data The data to set
   cell_c(cell_type_e type, cell_real_t data) : type(type) {
     assert(type == cell_type_e::REAL);
-    this->data.d = data;
+    this->real = data;
   }
 
   //! \brief Create a standard cell
@@ -100,7 +97,7 @@ public:
   //! \param data The data to set
   cell_c(cell_type_e type, cell_int_t data) : type(type) {
     assert(type == cell_type_e::INTEGER);
-    this->data.i = data;
+    this->integer = data;
   }
 
   //! \brief Create a standard cell
@@ -111,7 +108,7 @@ public:
       : type(type) {
     assert(type != cell_type_e::INTEGER);
     assert(type != cell_type_e::REAL);
-    this->data.s = new std::string(data);
+    this->string = data;
     if (location_in) {
       location = new location_s(*location_in);
     }
@@ -124,7 +121,7 @@ public:
   cell_c(cell_type_e type, const cell_real_t data, location_s *location_in)
       : type(type) {
     assert(type == cell_type_e::REAL);
-    this->data.d = data;
+    this->real = data;
     if (location_in) {
       location = new location_s(*location_in);
     }
@@ -137,7 +134,7 @@ public:
   cell_c(cell_type_e type, const cell_int_t data, location_s *location_in)
       : type(type) {
     assert(type == cell_type_e::INTEGER);
-    this->data.i = data;
+    this->integer = data;
     if (location_in) {
       location = new location_s(*location_in);
     }
@@ -161,7 +158,7 @@ public:
       : type(type), origin(origin) {
     assert(type != cell_type_e::INTEGER);
     assert(type != cell_type_e::REAL);
-    this->data.s = new std::string(data);
+    this->string = data;
     if (location_in) {
       location = new location_s(*location_in);
     }
@@ -175,7 +172,7 @@ public:
          std::shared_ptr<std::string> origin)
       : type(type), origin(origin) {
     assert(type == cell_type_e::REAL);
-    this->data.d = data;
+    this->real = data;
     if (location_in) {
       location = new location_s(*location_in);
     }
@@ -189,7 +186,7 @@ public:
          std::shared_ptr<std::string> origin)
       : type(type), origin(origin) {
     assert(type == cell_type_e::INTEGER);
-    this->data.i = data;
+    this->integer = data;
     if (location_in) {
       location = new location_s(*location_in);
     }
@@ -200,15 +197,11 @@ public:
   //! \note Process cells are declared as SYMBOL to reduce number of
   //!       given celltypes. A process cell can be quickly identified
   //!       by the existence of a valid proc_f being set
-  cell_c(proc_f proc) : type(cell_type_e::SYMBOL), proc(proc) {
-    data.s = nullptr;
-  }
+  cell_c(proc_f proc) : type(cell_type_e::SYMBOL), proc(proc) {}
 
   //! \brief Create a list cell
   //! \param list The list to set in the cell
-  cell_c(cells_t list) : type(cell_type_e::LIST), list(list) {
-    data.s = nullptr;
-  }
+  cell_c(cells_t list) : type(cell_type_e::LIST), list(list) {}
 
   //! \brief Clone the cell
   //! \returns A new copy of the cell in a shared_ptr
@@ -218,15 +211,13 @@ public:
   cell_c(const cell_c &other) {
     switch (other.type) {
     case cell_type_e::REAL:
-      data.d = other.data.d;
+      real = other.real;
       break;
     case cell_type_e::INTEGER:
-      data.i = other.data.i;
+      integer = other.integer;
       break;
-    default:
-      if (other.data.s) {
-        data.s = new std::string(*other.data.s);
-      }
+    case cell_type_e::STRING:
+      string = other.string;
       break;
     }
     type = other.type;
@@ -246,71 +237,32 @@ public:
       delete location;
       location = nullptr;
     }
-    if ((type != cell_type_e::INTEGER && type != cell_type_e::REAL) && data.s) {
-      delete data.s;
-      data.s = nullptr;
-    }
   }
 
-  std::string data_as_str() const {
+  //! \brief Convert cell primary data to string
+  std::string as_string() const {
     switch (type) {
     case cell_type_e::INTEGER:
-      return std::to_string(data.i);
+      return std::to_string(integer);
     case cell_type_e::REAL:
-      return std::to_string(data.d);
+      return std::to_string(real);
     case cell_type_e::STRING:
-      return *data.s;
-    default: {
-      if (data.s) {
-        return *data.s;
-      }
-    }
+      return string;
     }
     return "";
-  }
-
-  bool contains_string() const {
-    return nullptr != data.s;
-  }
-
-  void set_string(const char *data) {
-    this->data.s = new std::string(data);
-  }
-
-  cell_string_t get_string() const {
-    if (data.s) { return *data.s; }
-    return "";
-  }
-
-  cell_int_t get_integer() const {
-    return data.i;
-  }
-
-  cell_real_t get_real() const {
-    return data.d;
   }
 
   cell_type_e type{cell_type_e::SYMBOL};
-  location_s *location{nullptr};
-  proc_f proc{nullptr};
+
   cells_t list;
+  cell_int_t integer;
+  cell_real_t real;
+  cell_string_t string;
+  proc_f proc{nullptr};
+  location_s *location{nullptr};
+  std::shared_ptr<std::string> origin{nullptr};
   std::shared_ptr<environment_c> inner_env{nullptr};
   uint8_t builtin_encoding{BUILTIN_DEFAULT_VAL};
-  std::shared_ptr<std::string> origin{nullptr};
-
-protected:
-  union data_u {
-    constexpr data_u() : s{nullptr} {}
-    ~data_u() {}
-    cell_int_t i;
-    cell_real_t d;
-    cell_string_t *s;
-  };
-
-  // Perhaps we should expose the data and not use a union <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-  // Data
-  data_u data;
 };
 
 static const cell_c CELL_TRUE = cell_c(
@@ -403,7 +355,7 @@ public:
 
   // The entity that utilizes this pointer
   // is responsible for maintaining the
-  // data it points
+  // data it points to
   void *ptr{nullptr}; // use void* instead of std::any as its 8 bytes smaller
 
   // Callback that, if set, will be executed upon

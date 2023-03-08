@@ -30,7 +30,7 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
                 "sauros home directory not found. please set "
                 "SAUROS_HOME environment variable.")
 
-  auto target = cell->data_as_str();
+  auto target = cell->as_string();
 
   std::filesystem::path root;
   std::filesystem::path target_manifest_file;
@@ -91,7 +91,7 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
     if (package.env->exists("authors")) {
       auto author_cell = package.env->get("authors");
       if (author_cell->type == cell_type_e::STRING) {
-        package.authors_list.push_back(author_cell->data_as_str());
+        package.authors_list.push_back(author_cell->as_string());
       } else {
         PACKAGE_CHECK(
             (author_cell->type == cell_type_e::LIST),
@@ -101,7 +101,7 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
           PACKAGE_CHECK(
               (author->type == cell_type_e::STRING),
               "author name in pkg authors list must be of type `string`")
-          package.authors_list.push_back(author->data_as_str());
+          package.authors_list.push_back(author->as_string());
         }
       }
     }
@@ -113,7 +113,7 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
       PACKAGE_CHECK((license_cell->type == cell_type_e::STRING),
                     "license field in pkg must be of type `string`")
 
-      package.license = license_cell->data_as_str();
+      package.license = license_cell->as_string();
     }
 
     auto package_name_cell = package.env->get("pkg_name");
@@ -126,8 +126,8 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
     PACKAGE_CHECK((version_cell->type == cell_type_e::STRING),
                   "version field in pkg must be of type `string`")
 
-    package.name = package_name_cell->data_as_str();
-    package.version = version_cell->data_as_str();
+    package.name = package_name_cell->as_string();
+    package.version = version_cell->as_string();
 
     auto package_file = root;
     package_file /= "pkg.saur";
@@ -141,7 +141,7 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
         PACKAGE_CHECK(
             (required_pkg->type == cell_type_e::STRING),
             "package name in pkg's requires list must be of type `string`")
-        package.requires_list.push_back(required_pkg->data_as_str());
+        package.requires_list.push_back(required_pkg->as_string());
       }
     }
 
@@ -155,7 +155,7 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
 
       {
         auto library_file_actual = root;
-        library_file_actual /= library_file_cell->data_as_str();
+        library_file_actual /= library_file_cell->as_string();
 
         PACKAGE_CHECK(
             (std::filesystem::is_regular_file(library_file_actual)),
@@ -186,7 +186,7 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
                       "be of type `string`")
 
         package.library_function_list.push_back(
-            function_name_cell->data_as_str());
+            function_name_cell->as_string());
       }
     }
 
@@ -205,7 +205,7 @@ extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
 
         {
           auto file_actual = root;
-          file_actual /= file_name_cell->data_as_str();
+          file_actual /= file_name_cell->as_string();
 
           PACKAGE_CHECK(
               (std::filesystem::is_regular_file(file_actual)),
