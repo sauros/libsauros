@@ -530,7 +530,7 @@ void processor_c::populate_standard_builtins() {
           throw exceptions::runtime_c(
               "first parameter to iter needs to be a symbol", cells[1]);
         }
-        auto iter_var = cells[1]->as_string();
+        auto &iter_var = cells[1]->string;
 
         auto processed_list = load_potential_variable(cells[2], env);
         if (processed_list->type != cell_type_e::LIST) {

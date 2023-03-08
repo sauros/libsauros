@@ -85,19 +85,22 @@ void processor_c::quote_cell(std::string &out, cell_ptr cell, env_ptr env) {
   switch (cell->type) {
   case cell_type_e::REAL:
     [[fallthrough]];
-  case cell_type_e::INTEGER:
-    [[fallthrough]];
+  case cell_type_e::INTEGER: {
+    out += cell->as_string();
+    out += " ";
+    break;
+  }
   case cell_type_e::ENCODED_SYMBOL:
     [[fallthrough]];
   case cell_type_e::BOX_SYMBOL:
     [[fallthrough]];
   case cell_type_e::SYMBOL: {
-    out += cell->as_string();
+    out += cell->string;
     out += " ";
     break;
   }
   case cell_type_e::STRING:
-    out += "\"" + cell->as_string() + "\" ";
+    out += "\"" + cell->string + "\" ";
     break;
   case cell_type_e::LIST: {
 
