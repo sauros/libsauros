@@ -132,5 +132,10 @@ include(${PROJECT_SOURCE_DIR}/cmake/InstallConfig.cmake)
 # Tests
 #
 if(COMPILE_TESTS)
+
+  # Run unit tests
   add_subdirectory(tests)
+
+  # Create a stub app so we can run script tests
+  add_subdirectory(test_app)
 endif()
