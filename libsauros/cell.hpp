@@ -307,11 +307,10 @@ protected:
     cell_string_t *s;
   };
 
+  // Perhaps we should expose the data and not use a union <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
   // Data
   data_u data;
-
-  std::variant<cell_int_t, cell_real_t, cell_string_t> cell_data;
-
 };
 
 static const cell_c CELL_TRUE = cell_c(
