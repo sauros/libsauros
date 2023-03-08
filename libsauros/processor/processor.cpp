@@ -378,9 +378,8 @@ cell_ptr processor_c::load_potential_variable(cell_ptr cell, env_ptr env) {
                                 env->get_last_good_cell());
   }
 
-  auto variable_name = cell->string;
-  auto containing_env = env->find(variable_name, cell);
-  return containing_env->get(variable_name);
+  auto containing_env = env->find(cell->string, cell);
+  return containing_env->get(cell->string);
 }
 
 } // namespace sauros

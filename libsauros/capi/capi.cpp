@@ -18,3 +18,10 @@ c_api_cell_to_string(sauros::cell_ptr cell,
   return std::shared_ptr<sauros::cell_c>(
       new sauros::cell_c(sauros::cell_type_e::STRING, result_string));
 }
+
+sauros::cell_ptr
+c_api_load_potential_variable(sauros::cell_ptr cell,
+                              std::shared_ptr<sauros::environment_c> env) {
+  sauros::processor_c processor;
+  return processor.load_potential_variable(cell, env);
+}

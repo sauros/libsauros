@@ -1,12 +1,12 @@
-#include "processor.hpp"
 #include "libsauros/driver.hpp"
+#include "libsauros/format.hpp"
 #include "libsauros/profiler.hpp"
+#include "libsauros/system.hpp"
+#include "processor.hpp"
 #include <algorithm>
 #include <filesystem>
 #include <iostream>
 #include <limits>
-
-#include "libsauros/format.hpp"
 
 namespace sauros {
 
@@ -33,9 +33,9 @@ static constexpr double EPSILON = 0.0001;
     throw exceptions::runtime_c("Invalid data type given for operand",         \
                                 cells[0]);                                     \
   }                                                                            \
-  double result = first_cell_value->real;                                    \
+  double result = first_cell_value->real;                                      \
   if (first_cell_value->type == cell_type_e::INTEGER) {                        \
-    result = first_cell_value->integer;                                  \
+    result = first_cell_value->integer;                                        \
   }                                                                            \
   for (auto i = cells.begin() + 2; i != cells.end(); ++i) {                    \
     auto cell_value = process_cell((*i), env);                                 \
@@ -44,9 +44,9 @@ static constexpr double EPSILON = 0.0001;
       throw exceptions::runtime_c("Invalid data type given for operand",       \
                                   cells[0]);                                   \
     }                                                                          \
-    double cell_value_actual = cell_value->real;                             \
+    double cell_value_actual = cell_value->real;                               \
     if (cell_value->type == cell_type_e::INTEGER) {                            \
-      cell_value_actual = cell_value->integer;                           \
+      cell_value_actual = cell_value->integer;                                 \
     }                                                                          \
     result = fn(result, cell_value_actual);                                    \
   }                                                                            \
@@ -141,7 +141,7 @@ void processor_c::populate_standard_builtins() {
 
           if (cells[0]->origin) {
             if (!perform_load((*i)->string, cells[0]->origin,
-                              _system.get_sauros_directory())) {
+                              sauros::system::get_sauros_home_directory())) {
               throw sauros::exceptions::runtime_c(
                   "Unable to load import: " + (*i)->string, (*i));
             }
@@ -415,8 +415,7 @@ void processor_c::populate_standard_builtins() {
                      result->integer < 1) {
             throw exceptions::assertion_c(
                 "assertion failure: " + cells[1]->string, cells[0]);
-          } else if (cell_type_e::REAL == result->type &&
-                     result->real <= 0.0) {
+          } else if (cell_type_e::REAL == result->type && result->real <= 0.0) {
             throw exceptions::assertion_c(
                 "assertion failure: " + cells[1]->string, cells[0]);
           }

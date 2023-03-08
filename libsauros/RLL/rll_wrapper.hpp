@@ -13,7 +13,7 @@ class shared_library;
 namespace sauros {
 
 //! \brief A wrapper fo the rll lib as the header can only be included
-//!        once in a source file due to design decisions of
+//!        once in a source file due to design decisions of the authors
 class rll_wrapper_c {
 public:
   //! \brief THe definition of the thrown errors also needs

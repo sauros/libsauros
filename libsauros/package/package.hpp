@@ -2,7 +2,6 @@
 #define SAUROS_PACKAGE_HPP
 
 #include "libsauros/environment.hpp"
-#include "libsauros/system/system.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -22,8 +21,7 @@ struct pkg_s {
 };
 
 //! \brief Attempt to load a package from a target directory
-extern pkg_s load(cell_ptr cell, sauros::system_c &system, location_s *location,
-                  env_ptr env);
+extern pkg_s load(cell_ptr cell, location_s *location, env_ptr env);
 } // namespace package
 } // namespace sauros
 #endif
