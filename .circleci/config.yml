@@ -19,8 +19,11 @@ jobs:
           name: Package Installation
           command: 'bash scripts/package_install.sh'
       - run:
+          name: Retrieve testing application
+          command: 'git clone https://github.com/sauros/testing_application.git'
+      - run:
           name: Build test application
-          command: 'cd test_app && mkdir build && cd build && cmake ../ && make -j4'
+          command: 'cd testing_application && mkdir build && cd build && cmake ../ && make -j4'
       - run:
           name: Scripted Tests
-          command: 'cd test_scripts && export SAUROS_HOME="/tmp/.sauros" && python3 run.py ../test_app/build/app'
+          command: 'cd test_scripts && export SAUROS_HOME="/tmp/.sauros" && python3 run.py ../testing_application/build/app'
