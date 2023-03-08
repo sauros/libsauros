@@ -14,6 +14,6 @@ add_executable(app
                
 target_link_libraries(app
    PUBLIC
-   dl
    ${LIBSAUROS_LIBRARIES}
+   dl
    Threads::Threads)
