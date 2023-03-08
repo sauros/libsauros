@@ -246,7 +246,7 @@ public:
       return std::to_string(integer);
     case cell_type_e::REAL:
       return std::to_string(real);
-    case cell_type_e::STRING:
+    default:
       return string;
     }
     return "";
