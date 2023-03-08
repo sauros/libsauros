@@ -1,14 +1,18 @@
+cmake_minimum_required(VERSION 3.8)
 
-include_directories(
-  ../
-)
+project(app)
+
+set(CMAKE_CXX_STANDARD 20)
 
 find_package (Threads REQUIRED)
 
-add_executable(app
-        ${SAUROS_SOURCES}
-        main.cpp)
+find_package(libsauros REQUIRED)
+include_directories(${LIBAUROS_INCLUDE_DIRS})
 
+add_executable(app
+               main.cpp)
+               
 target_link_libraries(app
-  dl
-  Threads::Threads)
+   PRIVATE
+   ${LIBSAUROS_LIBRARIES}
+   Threads::Threads)

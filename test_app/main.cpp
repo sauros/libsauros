@@ -1,4 +1,4 @@
-#include "libsauros/sauros.hpp"
+#include <libsauros/sauros.hpp>
 
 #include <filesystem>
 #include <iostream>
