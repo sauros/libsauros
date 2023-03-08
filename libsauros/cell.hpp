@@ -12,6 +12,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <variant>
 
 #include <iostream>
 
@@ -268,6 +269,36 @@ public:
     return "";
   }
 
+  bool contains_string() const {
+    return nullptr != data.s;
+  }
+
+  void set_string(const char *data) {
+    this->data.s = new std::string(data);
+  }
+
+  cell_string_t get_string() const {
+    if (data.s) { return *data.s; }
+    return "";
+  }
+
+  cell_int_t get_integer() const {
+    return data.i;
+  }
+
+  cell_real_t get_real() const {
+    return data.d;
+  }
+
+  cell_type_e type{cell_type_e::SYMBOL};
+  location_s *location{nullptr};
+  proc_f proc{nullptr};
+  cells_t list;
+  std::shared_ptr<environment_c> inner_env{nullptr};
+  uint8_t builtin_encoding{BUILTIN_DEFAULT_VAL};
+  std::shared_ptr<std::string> origin{nullptr};
+
+protected:
   union data_u {
     constexpr data_u() : s{nullptr} {}
     ~data_u() {}
@@ -278,13 +309,9 @@ public:
 
   // Data
   data_u data;
-  cell_type_e type{cell_type_e::SYMBOL};
-  location_s *location{nullptr};
-  proc_f proc{nullptr};
-  cells_t list;
-  std::shared_ptr<environment_c> inner_env{nullptr};
-  uint8_t builtin_encoding{BUILTIN_DEFAULT_VAL};
-  std::shared_ptr<std::string> origin{nullptr};
+
+  std::variant<cell_int_t, cell_real_t, cell_string_t> cell_data;
+
 };
 
 static const cell_c CELL_TRUE = cell_c(
