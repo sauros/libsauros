@@ -69,7 +69,7 @@ set(SAUROS_SOURCES
    ${PROJECT_SOURCE_DIR}/libsauros/profiler.cpp
    ${PROJECT_SOURCE_DIR}/libsauros/capi/capi.cpp
    ${PROJECT_SOURCE_DIR}/libsauros/RLL/rll_wrapper.cpp
-   ${PROJECT_SOURCE_DIR}/libsauros/system/system.cpp
+   ${PROJECT_SOURCE_DIR}/libsauros/system.cpp
    ${PROJECT_SOURCE_DIR}/libsauros/front/parser.cpp
    ${PROJECT_SOURCE_DIR}/libsauros/package/package.cpp
    ${PROJECT_SOURCE_DIR}/libsauros/processor/processor.cpp
@@ -101,7 +101,7 @@ set(HEADERS
    ${PROJECT_SOURCE_DIR}/libsauros/rang.hpp
    ${PROJECT_SOURCE_DIR}/libsauros/capi/capi.hpp
    ${PROJECT_SOURCE_DIR}/libsauros/RLL/rll_wrapper.hpp
-   ${PROJECT_SOURCE_DIR}/libsauros/system/system.hpp
+   ${PROJECT_SOURCE_DIR}/libsauros/system.hpp
    ${PROJECT_SOURCE_DIR}/libsauros/package/package.hpp
    ${PROJECT_SOURCE_DIR}/libsauros/processor/processor.hpp
    ${PROJECT_SOURCE_DIR}/libsauros/environment.hpp

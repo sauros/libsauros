@@ -31,7 +31,7 @@ environment_c::environment_c(cells_t &params, cells_t &args,
 #endif
   auto arg = args.begin();
   for (auto param = params.begin(); param != params.end(); ++param) {
-    _env[(*(*param)->data.s)] = *arg++;
+    _env[(*param)->string] = *arg++;
   }
 }
 

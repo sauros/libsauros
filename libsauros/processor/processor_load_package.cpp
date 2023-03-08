@@ -1,7 +1,7 @@
-#include "processor.hpp"
 #include "libsauros/driver.hpp"
 #include "libsauros/package/package.hpp"
 #include "libsauros/profiler.hpp"
+#include "processor.hpp"
 #include <filesystem>
 #include <iostream>
 
@@ -22,13 +22,13 @@ void processor_c::load_package(cell_ptr cell, location_s *location,
   profiler_c::get_profiler()->hit("processor_c::load_package");
 #endif
 
-  auto target = cell->data_as_str();
+  auto target = cell->as_string();
   // Check to see if its already loaded
   if (env->package_loaded(target)) {
     return;
   }
 
-  auto pkg = package::load(cell, _system, location, env);
+  auto pkg = package::load(cell, location, env);
 
   // Load any required packages
   for (auto &required_package : pkg.requires_list) {

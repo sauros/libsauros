@@ -1,12 +1,12 @@
-#include "processor.hpp"
 #include "libsauros/driver.hpp"
+#include "libsauros/format.hpp"
 #include "libsauros/profiler.hpp"
+#include "libsauros/system.hpp"
+#include "processor.hpp"
 #include <algorithm>
 #include <filesystem>
 #include <iostream>
 #include <limits>
-
-#include "libsauros/format.hpp"
 
 namespace sauros {
 
@@ -33,9 +33,9 @@ static constexpr double EPSILON = 0.0001;
     throw exceptions::runtime_c("Invalid data type given for operand",         \
                                 cells[0]);                                     \
   }                                                                            \
-  double result = first_cell_value->data.d;                                    \
+  double result = first_cell_value->real;                                      \
   if (first_cell_value->type == cell_type_e::INTEGER) {                        \
-    result = first_cell_value->data.i;                                         \
+    result = first_cell_value->integer;                                        \
   }                                                                            \
   for (auto i = cells.begin() + 2; i != cells.end(); ++i) {                    \
     auto cell_value = process_cell((*i), env);                                 \
@@ -44,9 +44,9 @@ static constexpr double EPSILON = 0.0001;
       throw exceptions::runtime_c("Invalid data type given for operand",       \
                                   cells[0]);                                   \
     }                                                                          \
-    double cell_value_actual = cell_value->data.d;                             \
+    double cell_value_actual = cell_value->real;                               \
     if (cell_value->type == cell_type_e::INTEGER) {                            \
-      cell_value_actual = cell_value->data.i;                                  \
+      cell_value_actual = cell_value->integer;                                 \
     }                                                                          \
     result = fn(result, cell_value_actual);                                    \
   }                                                                            \
@@ -65,7 +65,7 @@ static inline bool eval_truthy(cell_ptr cell, location_s *location) {
 
   switch (cell->type) {
   case cell_type_e::STRING:
-    return (!cell->data.s->empty());
+    return cell->string.size();
     break;
   case cell_type_e::LIST:
     return (!cell->list.empty());
@@ -74,9 +74,9 @@ static inline bool eval_truthy(cell_ptr cell, location_s *location) {
     return true;
     break;
   case cell_type_e::REAL:
-    return (cell->data.d > 0.0); // TODO: do this correctly
+    return (cell->real > 0.0); // TODO: do this correctly
   case cell_type_e::INTEGER:
-    return (cell->data.i > 0);
+    return (cell->integer > 0);
   }
   return false;
 }
@@ -88,9 +88,9 @@ void processor_c::populate_standard_builtins() {
   auto expect_var_get_name = [this](cell_ptr cell) -> std::string {
     if (cell->builtin_encoding != BUILTIN_DEFAULT_VAL) {
       throw exceptions::runtime_c(
-          "Attempting to define a key symbol: " + (*cell->data.s), cell);
+          "Attempting to define a key symbol: " + cell->string, cell);
     }
-    return (*cell->data.s);
+    return cell->string;
   };
 
   _builtins[BUILTIN_IMPORT] =
@@ -140,10 +140,10 @@ void processor_c::populate_standard_builtins() {
           }
 
           if (cells[0]->origin) {
-            if (!perform_load((*(*i)->data.s), cells[0]->origin,
-                              _system.get_sauros_directory())) {
+            if (!perform_load((*i)->string, cells[0]->origin,
+                              sauros::system::get_sauros_home_directory())) {
               throw sauros::exceptions::runtime_c(
-                  "Unable to load import: " + (*(*i)->data.s), (*i));
+                  "Unable to load import: " + (*i)->string, (*i));
             }
           }
         }
@@ -176,7 +176,7 @@ void processor_c::populate_standard_builtins() {
 #endif
         SAUROS_PROCESSOR_CHECK_CELL_SIZE(cells, 2, "exit");
 
-        auto exit_code = process_cell(cells[1], env)->data.i;
+        auto exit_code = process_cell(cells[1], env)->integer;
         std::exit(exit_code);
       });
 
@@ -259,7 +259,7 @@ void processor_c::populate_standard_builtins() {
               "at command index must me an integer type", cells[0]);
         }
 
-        uint64_t idx = index->data.i;
+        uint64_t idx = index->integer;
 
         if (cells[2]->type != cell_type_e::SYMBOL &&
             cells[2]->type != cell_type_e::BOX_SYMBOL) {
@@ -348,7 +348,7 @@ void processor_c::populate_standard_builtins() {
               cells[0]);
         }
 
-        throw exceptions::runtime_c(*message->data.s, cells[0]);
+        throw exceptions::runtime_c(message->string, cells[0]);
       });
 
   _builtins[BUILTIN_NOT] =
@@ -367,9 +367,9 @@ void processor_c::populate_standard_builtins() {
               cells[1]);
         }
 
-        double check = target->data.d;
+        double check = target->real;
         if (target->type == cell_type_e::INTEGER) {
-          check = target->data.i;
+          check = target->integer;
         }
 
         if (check > 0.0) {
@@ -408,17 +408,16 @@ void processor_c::populate_standard_builtins() {
                 (*c));
           }
 
-          if (cell_type_e::STRING == result->type && result->data.s->empty()) {
+          if (cell_type_e::STRING == result->type && (!result->string.size())) {
             throw exceptions::assertion_c(
-                "assertion failure: " + *cells[1]->data.s, cells[0]);
+                "assertion failure: " + cells[1]->string, cells[0]);
           } else if (cell_type_e::INTEGER == result->type &&
-                     result->data.i < 1) {
+                     result->integer < 1) {
             throw exceptions::assertion_c(
-                "assertion failure: " + *cells[1]->data.s, cells[0]);
-          } else if (cell_type_e::REAL == result->type &&
-                     result->data.d <= 0.0) {
+                "assertion failure: " + cells[1]->string, cells[0]);
+          } else if (cell_type_e::REAL == result->type && result->real <= 0.0) {
             throw exceptions::assertion_c(
-                "assertion failure: " + *cells[1]->data.s, cells[0]);
+                "assertion failure: " + cells[1]->string, cells[0]);
           }
         }
         return std::make_shared<cell_c>(CELL_TRUE);
@@ -531,7 +530,7 @@ void processor_c::populate_standard_builtins() {
           throw exceptions::runtime_c(
               "first parameter to iter needs to be a symbol", cells[1]);
         }
-        auto iter_var = cells[1]->data_as_str();
+        auto &iter_var = cells[1]->string;
 
         auto processed_list = load_potential_variable(cells[2], env);
         if (processed_list->type != cell_type_e::LIST) {
@@ -618,7 +617,7 @@ void processor_c::populate_standard_builtins() {
 #endif
         SAUROS_PROCESSOR_CHECK_CELL_SIZE(cells, 3, "set");
 
-        auto &variable_name = *cells[1]->data.s;
+        auto variable_name = cells[1]->string;
 
         switch (cells[1]->type) {
         case cell_type_e::BOX_SYMBOL: {
@@ -667,7 +666,7 @@ void processor_c::populate_standard_builtins() {
 
         auto target_value = process_cell(cells[3], env);
         auto target_var = load_potential_variable(cells[2], env);
-        target_var->list[idx->data.i] = target_value;
+        target_var->list[idx->integer] = target_value;
         return std::make_shared<cell_c>(CELL_TRUE);
       });
 
@@ -710,7 +709,7 @@ void processor_c::populate_standard_builtins() {
 
         cell_ptr list = std::make_shared<cell_c>(body);
         list->type = cell_type_e::LIST;
-        list->data.s = new std::string("<list>");
+        list->string = "<list>";
         return {list};
       });
 
@@ -768,7 +767,7 @@ void processor_c::populate_standard_builtins() {
         cell_ptr result;
         eval_c evaluator(env, [&result](cell_ptr cell) { result = cell; });
 
-        evaluator.eval(cells[1]->location->line, *target->data.s);
+        evaluator.eval(cells[1]->location->line, target->string);
         return result;
       });
 
@@ -823,7 +822,7 @@ void processor_c::populate_standard_builtins() {
           return std::make_shared<cell_c>(sauros::CELL_FALSE);
         }
 
-        return ((*target->data.s) == *CELL_NIL.data.s)
+        return (target->string == CELL_NIL.string)
                    ? std::make_shared<cell_c>(sauros::CELL_TRUE)
                    : std::make_shared<cell_c>(sauros::CELL_FALSE);
       });
@@ -900,7 +899,7 @@ void processor_c::populate_standard_builtins() {
               "Both operands of seq must be of type string", rhs);
         }
         return std::make_shared<cell_c>(
-            cell_type_e::INTEGER, (cell_int_t)(*lhs->data.s == *rhs->data.s),
+            cell_type_e::INTEGER, (cell_int_t)(lhs->string == rhs->string),
             cells[0]->location);
       });
 
@@ -923,7 +922,7 @@ void processor_c::populate_standard_builtins() {
               "Both operands of sneq must be of type string", rhs);
         }
         return std::make_shared<cell_c>(
-            cell_type_e::INTEGER, (cell_int_t)(*lhs->data.s != *rhs->data.s),
+            cell_type_e::INTEGER, (cell_int_t)(lhs->string != rhs->string),
             cells[0]->location);
       });
 
@@ -1168,9 +1167,9 @@ void processor_c::populate_standard_builtins() {
               cells[0]);
         }
 
-        double check = target->data.d;
+        double check = target->real;
         if (target->type == cell_type_e::INTEGER) {
-          check = target->data.i;
+          check = target->integer;
         }
         auto val = static_cast<int64_t>(check);
         return std::make_shared<cell_c>(cell_type_e::INTEGER, ~val);
@@ -1200,13 +1199,13 @@ void processor_c::populate_standard_builtins() {
             cells[1], env, [this, env](cell_ptr target) -> cell_ptr {
               auto processed_target = this->process_cell(target, env);
 
-              double check = processed_target->data.d;
+              double check = processed_target->real;
               if (processed_target->type == cell_type_e::STRING) {
-                check = std::stod(processed_target->data_as_str());
+                check = std::stod(processed_target->as_string());
               }
 
               if (processed_target->type == cell_type_e::INTEGER) {
-                check = processed_target->data.i;
+                check = processed_target->integer;
               }
               return std::make_shared<cell_c>(cell_type_e::INTEGER,
                                               static_cast<cell_int_t>(check));
@@ -1227,11 +1226,11 @@ void processor_c::populate_standard_builtins() {
           for (auto e : target->list) {
             auto r = process_cell(e, env);
             if (r->type == cell_type_e::INTEGER) {
-              result += std::to_string(r->data.i);
+              result += std::to_string(r->integer);
             } else if (r->type == cell_type_e::REAL) {
-              result += std::to_string(r->data.d);
+              result += std::to_string(r->real);
             } else {
-              result += r->data_as_str();
+              result += r->as_string();
             }
           }
           return std::make_shared<cell_c>(cell_type_e::STRING, result);
@@ -1255,13 +1254,13 @@ void processor_c::populate_standard_builtins() {
             cells[1], env, [this, env](cell_ptr target) -> cell_ptr {
               auto processed_target = this->process_cell(target, env);
 
-              double check = processed_target->data.d;
+              double check = processed_target->real;
               if (processed_target->type == cell_type_e::STRING) {
-                check = std::stod(processed_target->data_as_str());
+                check = std::stod(processed_target->as_string());
               }
 
               if (processed_target->type == cell_type_e::INTEGER) {
-                check = processed_target->data.i;
+                check = processed_target->integer;
               }
               return std::make_shared<cell_c>(cell_type_e::REAL,
                                               static_cast<cell_real_t>(check));
@@ -1285,11 +1284,11 @@ void processor_c::populate_standard_builtins() {
         cell_ptr result = std::make_shared<cell_c>(cell_type_e::LIST);
         std::string item;
         if (target->type == cell_type_e::INTEGER) {
-          item = std::to_string(target->data.i);
+          item = std::to_string(target->integer);
         } else if (target->type == cell_type_e::REAL) {
-          item = std::to_string(target->data.d);
+          item = std::to_string(target->real);
         } else {
-          item = target->data_as_str();
+          item = target->as_string();
         }
         for (auto c : item) {
           std::string as_individual = std::string(1, c);

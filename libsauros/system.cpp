@@ -6,11 +6,12 @@
 #include <iostream>
 
 namespace sauros {
+namespace system {
 
-system_c::system_c() {
+std::optional<std::string> get_sauros_home_directory() {
 
 #ifdef PROFILER_ENABLED
-  profiler_c::get_profiler()->hit("system_c::system_c");
+  profiler_c::get_profiler()->hit("get_sauros_home_directory");
 #endif
 
   std::filesystem::path sauros_home;
@@ -44,17 +45,17 @@ system_c::system_c() {
     if (!std::filesystem::exists(user_home)) {
       // std::cerr << "Suspected home directory `" << user_home.c_str() << "`
       // does not exist - Unable to determine sauors home" << std::endl;
-      return;
+      return {};
     }
 
     sauros_home = user_home / std::filesystem::path(".sauros");
   }
 
   if (std::filesystem::exists(sauros_home)) {
-    _home = sauros_home.c_str();
-    // std::cout << "sauros home exists" << std::endl;
-    return;
+    return {sauros_home.string()};
   }
+  return {};
 }
 
+} // namespace system
 } // namespace sauros

@@ -21,19 +21,19 @@ void processor_c::cell_to_string(std::string &out, cell_ptr cell, env_ptr env,
 #endif
   switch (cell->type) {
   case cell_type_e::REAL:
-    out += std::to_string(cell->data.d);
+    out += std::to_string(cell->real);
     if (show_space) {
       out += " ";
     }
     break;
   case cell_type_e::STRING:
-    out += *cell->data.s;
+    out += cell->string;
     if (show_space) {
       out += " ";
     }
     break;
   case cell_type_e::INTEGER:
-    out += std::to_string(cell->data.i);
+    out += std::to_string(cell->integer);
     if (show_space) {
       out += " ";
     }
@@ -85,19 +85,22 @@ void processor_c::quote_cell(std::string &out, cell_ptr cell, env_ptr env) {
   switch (cell->type) {
   case cell_type_e::REAL:
     [[fallthrough]];
-  case cell_type_e::INTEGER:
-    [[fallthrough]];
+  case cell_type_e::INTEGER: {
+    out += cell->as_string();
+    out += " ";
+    break;
+  }
   case cell_type_e::ENCODED_SYMBOL:
     [[fallthrough]];
   case cell_type_e::BOX_SYMBOL:
     [[fallthrough]];
   case cell_type_e::SYMBOL: {
-    out += cell->data_as_str();
+    out += cell->string;
     out += " ";
     break;
   }
   case cell_type_e::STRING:
-    out += "\"" + cell->data_as_str() + "\" ";
+    out += "\"" + cell->string + "\" ";
     break;
   case cell_type_e::LIST: {
 
@@ -113,21 +116,21 @@ void processor_c::quote_cell(std::string &out, cell_ptr cell, env_ptr env) {
 
     auto &cells = cell->list;
 
-    auto lambda_name = cell->data_as_str();
+    auto lambda_name = cell->as_string();
 
     out += lambda_name + "[ ";
 
-    if (!cells[0]->data.s) {
+    if (!cells[0]->string.size()) {
       throw exceptions::runtime_c("Accessed data item unknown",
                                   env->get_last_good_cell());
     }
 
     auto target_lambda =
-        env->find(*cells[0]->data.s, cells[0])->get(*cells[0]->data.s);
+        env->find(cells[0]->string, cells[0])->get(cells[0]->string);
 
     for (auto param = target_lambda->list[0]->list.begin() + 1;
          param != target_lambda->list[0]->list.end(); ++param) {
-      out += *(*param)->data.s + " ";
+      out += (*param)->string + " ";
     }
 
     out += "] ";
@@ -228,12 +231,12 @@ cell_ptr processor_c::process_cell(cell_ptr cell, env_ptr env) {
   case cell_type_e::SYMBOL: {
     // If not built in maybe it is in the environment
     //
-    if (!cell->data.s) {
+    if (!cell->string.size()) {
       throw exceptions::runtime_c("Accessed data item unknown",
                                   env->get_last_good_cell());
     }
-    auto env_with_data = env->find(*cell->data.s, cell);
-    auto r = env_with_data->get(*cell->data.s);
+    auto env_with_data = env->find(cell->string, cell);
+    auto r = env_with_data->get(cell->string);
 
     if (r->type == cell_type_e::BOX) {
       return clone_box(r);
@@ -282,7 +285,7 @@ cell_ptr processor_c::process_lambda(cell_ptr cell, cells_t &cells,
 
   if (cell->list[0]->list.size() != exps.size()) {
     throw exceptions::runtime_c(
-        "Invalid number of paramters given to lambda: " + *cells[0]->data.s +
+        "Invalid number of paramters given to lambda: " + cells[0]->string +
             ". " + std::to_string(exps.size()) + " parameters given, but " +
             std::to_string(cell->list[0]->list.size()) + " were expected.",
         cells[0]);
@@ -291,7 +294,7 @@ cell_ptr processor_c::process_lambda(cell_ptr cell, cells_t &cells,
   // Create the lambda cell
   cell_ptr lambda_cell =
       std::make_shared<cell_c>(cell_type_e::LAMBDA, cells[0]->location);
-  lambda_cell->data.s = new std::string(*cells[0]->data.s);
+  lambda_cell->string = cells[0]->string;
   lambda_cell->type = cell->type;
   lambda_cell->list = cell->list[1]->list;
 
@@ -334,7 +337,7 @@ processor_c::retrieve_box_data(cell_ptr &cell,
   std::vector<std::string> accessors;
   {
     std::string accessor;
-    std::stringstream source(*cell->data.s);
+    std::stringstream source(cell->string);
     while (std::getline(source, accessor, '.')) {
       accessors.push_back(accessor);
     }
@@ -373,14 +376,13 @@ cell_ptr processor_c::load_potential_variable(cell_ptr cell, env_ptr env) {
     return process_cell(cell, env);
   }
 
-  if (!cell->data.s) {
+  if (!cell->string.size()) {
     throw exceptions::runtime_c("Accessed data item unknown",
                                 env->get_last_good_cell());
   }
 
-  auto &variable_name = *cell->data.s;
-  auto containing_env = env->find(variable_name, cell);
-  return containing_env->get(variable_name);
+  auto containing_env = env->find(cell->string, cell);
+  return containing_env->get(cell->string);
 }
 
 } // namespace sauros

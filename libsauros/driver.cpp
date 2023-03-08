@@ -1,11 +1,11 @@
 #include "driver.hpp"
+#include "libsauros/linenoise/linenoise.hpp"
 #include "profiler.hpp"
 #include "rang.hpp"
+#include "system.hpp"
 #include <csignal>
 #include <filesystem>
 #include <iostream>
-#include "libsauros/linenoise/linenoise.hpp"
-#include "libsauros/system/system.hpp"
 #include <unordered_map>
 
 namespace sauros {
@@ -315,8 +315,7 @@ void repl_c::start() {
 
   std::filesystem::path history_path(".sauros_repl_history.txt");
   {
-    system_c system;
-    auto home = system.get_sauros_directory();
+    auto home = sauros::system::get_sauros_home_directory();
     if (home.has_value()) {
       history_path = std::filesystem::path(*home);
       history_path /= "repl_history.txt";
