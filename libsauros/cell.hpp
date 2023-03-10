@@ -69,7 +69,7 @@ class cell_c {
 public:
   //! \brief Function pointer definition for a cell
   //!        used to execute code
-  using proc_f = std::function<cell_ptr(cells_t &, env_ptr env)>;
+  using proc_f = std::function<cell_t(cells_t &, env_ptr env)>;
 
   //! \brief Create an empty cell
   //! \param type The type to set (Defaults to SYMBOL)
@@ -205,7 +205,7 @@ public:
 
   //! \brief Clone the cell
   //! \returns A new copy of the cell in a shared_ptr
-  cell_ptr clone() const { return std::shared_ptr<cell_c>(new cell_c(*this)); }
+  cell_t clone() const { return std::shared_ptr<cell_c>(new cell_c(*this)); }
 
   //! \brief Explicit copy constructor for cell
   cell_c(const cell_c &other) {
@@ -290,7 +290,7 @@ public:
   cell_variant_type_e variant_type;
 };
 
-using variant_cell_ptr = std::shared_ptr<variant_cell_c>;
+using variant_cell_t = std::shared_ptr<variant_cell_c>;
 
 //! \brief A cell used to encapuslate the operations of an
 //!        asynchronus operation.This allows us to embed the
@@ -301,9 +301,9 @@ class async_cell_c : public variant_cell_c {
 public:
   async_cell_c(location_s *location);
   std::shared_ptr<processor_c> processor;
-  std::future<cell_ptr> future;
-  cell_ptr get_fn;
-  cell_ptr wait_fn;
+  std::future<cell_t> future;
+  cell_t get_fn;
+  cell_t wait_fn;
 };
 
 //! \brief A cell used to encapuslate the operations of an
@@ -316,10 +316,10 @@ public:
   thread_cell_c(location_s *location);
   std::shared_ptr<processor_c> processor;
   std::thread thread;
-  cell_ptr is_joinable;
-  cell_ptr join;
-  cell_ptr detach;
-  cell_ptr get_id;
+  cell_t is_joinable;
+  cell_t join;
+  cell_t detach;
+  cell_t get_id;
 };
 
 //! \brief A cell used to propagate data in a safe way
@@ -328,12 +328,12 @@ class chan_cell_c : public variant_cell_c {
 public:
   chan_cell_c(location_s *location);
   std::mutex channel_mutex;
-  std::queue<cell_ptr> channel_queue;
+  std::queue<cell_t> channel_queue;
   std::shared_ptr<processor_c> processor;
-  cell_ptr put_fn;
-  cell_ptr has_data_fn;
-  cell_ptr get_fn;
-  cell_ptr drain_fn;
+  cell_t put_fn;
+  cell_t has_data_fn;
+  cell_t get_fn;
+  cell_t drain_fn;
 };
 
 //! \brief A cell that can be used as a safe reference
@@ -341,9 +341,9 @@ class ref_cell_c : public variant_cell_c {
 public:
   ref_cell_c(location_s *location);
   std::mutex ref_mut;
-  cell_ptr ref_value;
-  cell_ptr put_fn;
-  cell_ptr get_fn;
+  cell_t ref_value;
+  cell_t put_fn;
+  cell_t get_fn;
 };
 
 //! \brief A cell that can be leveraged to store data
@@ -362,6 +362,23 @@ public:
   // the destruction of the cell
   std::function<void(void *)> deletion_cb{nullptr};
 };
+
+
+
+template< class... Args >
+inline cell_t create_cell(Args&&... args) {
+
+  return std::make_shared<cell_c>(args...);
+}
+
+
+
+
+
+
+
+
+
 
 } // namespace sauros
 

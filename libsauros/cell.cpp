@@ -9,13 +9,13 @@ namespace sauros {
 async_cell_c::async_cell_c(location_s *location)
     : variant_cell_c(cell_variant_type_e::ASYNC, location) {
 
-  get_fn = std::make_shared<cell_c>(
-      [this](cells_t &cells, env_ptr env) -> cell_ptr { return future.get(); });
+  get_fn = create_cell(
+      [this](cells_t &cells, env_ptr env) -> cell_t { return future.get(); });
 
   wait_fn =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
         future.wait();
-        return std::make_shared<cell_c>(CELL_TRUE);
+        return create_cell(CELL_TRUE);
       });
 }
 
@@ -23,34 +23,34 @@ thread_cell_c::thread_cell_c(location_s *location)
     : variant_cell_c(cell_variant_type_e::THREAD, location) {
 
   is_joinable =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
-        return std::make_shared<cell_c>(cell_type_e::INTEGER,
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
+        return create_cell(cell_type_e::INTEGER,
                                         std::to_string(thread.joinable()));
       });
 
   join =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
         try {
           thread.join();
         } catch (...) {
           throw exceptions::runtime_c("unable to join thread", cells[0]);
         }
-        return std::make_shared<cell_c>(CELL_TRUE);
+        return create_cell(CELL_TRUE);
       });
 
   detach =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
         thread.detach();
-        return std::make_shared<cell_c>(CELL_TRUE);
+        return create_cell(CELL_TRUE);
       });
 
   get_id =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
         std::stringstream ss;
         ss << thread.get_id();
         cell_int_t id{0};
         ss << id;
-        return std::make_shared<cell_c>(cell_type_e::INTEGER, id);
+        return create_cell(cell_type_e::INTEGER, id);
       });
 }
 
@@ -58,31 +58,31 @@ chan_cell_c::chan_cell_c(location_s *location)
     : variant_cell_c(cell_variant_type_e::CHAN, location) {
 
   put_fn =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
         if (cells.size() == 1) {
-          return std::make_shared<cell_c>(CELL_FALSE);
+          return create_cell(CELL_FALSE);
         }
         const std::lock_guard<std::mutex> lock(channel_mutex);
         for (auto it = cells.begin() + 1; it != cells.end(); ++it) {
           channel_queue.push(processor->process_cell((*it), env));
         }
-        return std::make_shared<cell_c>(CELL_TRUE);
+        return create_cell(CELL_TRUE);
       });
 
-  has_data_fn = std::make_shared<cell_c>([this](cells_t &cells,
-                                                env_ptr env) -> cell_ptr {
+  has_data_fn = create_cell([this](cells_t &cells,
+                                                env_ptr env) -> cell_t {
     const std::lock_guard<std::mutex> lock(channel_mutex);
-    return std::make_shared<cell_c>(
+    return create_cell(
         cell_type_e::INTEGER, static_cast<cell_int_t>(!channel_queue.empty()));
   });
 
   get_fn =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
-        cell_ptr next;
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
+        cell_t next;
         {
           const std::lock_guard<std::mutex> lock(channel_mutex);
           if (channel_queue.empty()) {
-            return std::make_shared<cell_c>(CELL_NIL);
+            return create_cell(CELL_NIL);
           }
           next = channel_queue.front();
           channel_queue.pop();
@@ -91,9 +91,9 @@ chan_cell_c::chan_cell_c(location_s *location)
       });
 
   drain_fn =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
         const std::lock_guard<std::mutex> lock(channel_mutex);
-        cell_ptr result = std::make_shared<cell_c>(cell_type_e::LIST);
+        cell_t result = create_cell(cell_type_e::LIST);
         while (!channel_queue.empty()) {
           result->list.push_back(channel_queue.front());
           channel_queue.pop();
@@ -106,18 +106,18 @@ ref_cell_c::ref_cell_c(location_s *location)
     : variant_cell_c(cell_variant_type_e::REF, location) {
 
   put_fn =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
         if (cells.size() != 2) {
           throw exceptions::runtime_c("ref_cell.put expects 1 parameters",
                                       cells[0]);
         }
         const std::lock_guard<std::mutex> lock(ref_mut);
         ref_value = cells[1];
-        return std::make_shared<cell_c>(CELL_TRUE);
+        return create_cell(CELL_TRUE);
       });
 
   get_fn =
-      std::make_shared<cell_c>([this](cells_t &cells, env_ptr env) -> cell_ptr {
+      create_cell([this](cells_t &cells, env_ptr env) -> cell_t {
         if (cells.size() != 1) {
           throw exceptions::runtime_c("ref_cell.get expects no parameters",
                                       cells[0]);

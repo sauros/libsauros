@@ -17,7 +17,7 @@ public:
   //! \brief Construct the expception
   //! \param message The message that is to be displayed
   //! \param location The location (line/col) that the error arose
-  assertion_c(std::string label, cell_ptr cell) : _label(label), _cell(cell) {}
+  assertion_c(std::string label, cell_t cell) : _label(label), _cell(cell) {}
 
   //! \brief Retrieve the description of the exception
   const char *what() const throw() { return _label.c_str(); }
@@ -33,7 +33,7 @@ public:
 
 private:
   std::string _label;
-  cell_ptr _cell;
+  cell_t _cell;
 };
 
 //!\brief An exception that can be thrown during processing
@@ -43,7 +43,7 @@ public:
 
   //! \brief Construct the expception
   //! \param message The message that is to be displayed
-  runtime_c(std::string message, cell_ptr cell) : _msg(message), _cell(cell) {}
+  runtime_c(std::string message, cell_t cell) : _msg(message), _cell(cell) {}
 
   //! \brief Retrieve the description of the exception
   const char *what() const throw() { return _msg.c_str(); }
@@ -60,7 +60,7 @@ public:
 
 private:
   std::string _msg;
-  cell_ptr _cell;
+  cell_t _cell;
 };
 
 //! \brief An exception thrown by the request for an identifier that isn't
@@ -71,7 +71,7 @@ public:
 
   //! \brief Create the exception
   //! \param identifier The identifier that was unknown
-  unknown_identifier_c(std::string identifier, cell_ptr cell)
+  unknown_identifier_c(std::string identifier, cell_t cell)
       : _id(identifier), _cell(cell) {}
   const char *what() const throw() { return "Unknown identifier"; }
 
@@ -88,7 +88,7 @@ public:
 
 private:
   std::string _id;
-  cell_ptr _cell;
+  cell_t _cell;
 };
 
 } // namespace exceptions

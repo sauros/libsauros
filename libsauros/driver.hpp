@@ -29,7 +29,7 @@ protected:
   void execute(const char *source, const uint64_t line_number,
                std::string &line);
   void execute(parser::segment_parser_c::segment_s segment);
-  virtual void cell_returned(cell_ptr cell) = 0;
+  virtual void cell_returned(cell_t cell) = 0;
   virtual void except(sauros::exceptions::runtime_c &e) = 0;
   virtual void except(sauros::exceptions::assertion_c &e) = 0;
   virtual void except(sauros::exceptions::unknown_identifier_c &e) = 0;
@@ -61,7 +61,7 @@ public:
   void finish();
 
 private:
-  virtual void cell_returned(cell_ptr cell) override final;
+  virtual void cell_returned(cell_t cell) override final;
   virtual void except(sauros::exceptions::runtime_c &e) override final;
   virtual void except(sauros::exceptions::assertion_c &e) override final;
   virtual void
@@ -91,7 +91,7 @@ public:
 
 private:
   bool _do{true};
-  virtual void cell_returned(cell_ptr cell) override final;
+  virtual void cell_returned(cell_t cell) override final;
   virtual void except(sauros::exceptions::runtime_c &e) override final;
   virtual void except(sauros::exceptions::assertion_c &e) override final;
   virtual void
@@ -108,14 +108,14 @@ public:
   //! \param env The environment to use
   //! \param cb The callback to issue when the cell is returned
   eval_c(std::shared_ptr<sauros::environment_c> env,
-         std::function<void(cell_ptr cell)> cb)
+         std::function<void(cell_t cell)> cb)
       : driver_if(env), _cb(cb) {}
 
   void eval(uint64_t line, std::string data) { execute("eval", line, data); }
 
 private:
-  std::function<void(cell_ptr cell)> _cb;
-  virtual void cell_returned(cell_ptr cell) override final;
+  std::function<void(cell_t cell)> _cb;
+  virtual void cell_returned(cell_t cell) override final;
   virtual void except(sauros::exceptions::runtime_c &e) override final;
   virtual void except(sauros::exceptions::assertion_c &e) override final;
   virtual void

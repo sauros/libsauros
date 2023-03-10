@@ -15,10 +15,10 @@ namespace package {
 #define PACKAGE_CHECK(condition__, msg__)                                      \
   if (!(condition__)) {                                                        \
     throw sauros::exceptions::runtime_c(                                       \
-        msg__, std::make_shared<cell_c>(cell_type_e::STRING, "", location));   \
+        msg__, create_cell(cell_type_e::STRING, "", location));   \
   }
 
-extern pkg_s load(cell_ptr cell, location_s *location, env_ptr env) {
+extern pkg_s load(cell_t cell, location_s *location, env_ptr env) {
 
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("package::load");

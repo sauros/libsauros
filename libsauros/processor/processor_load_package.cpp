@@ -16,7 +16,7 @@ namespace sauros {
 
 // Investigating the issue is backlogged.
 
-void processor_c::load_package(cell_ptr cell, location_s *location,
+void processor_c::load_package(cell_t cell, location_s *location,
                                env_ptr env) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::load_package");
@@ -32,7 +32,7 @@ void processor_c::load_package(cell_ptr cell, location_s *location,
 
   // Load any required packages
   for (auto &required_package : pkg.requires_list) {
-    load_package(std::make_shared<cell_c>(cell_type_e::STRING, required_package,
+    load_package(create_cell(cell_type_e::STRING, required_package,
                                           cell->location),
                  location, env);
   }
@@ -40,7 +40,7 @@ void processor_c::load_package(cell_ptr cell, location_s *location,
   auto package_rll = std::make_shared<rll_wrapper_c>();
 
   // Make the cell that will encompass all imports
-  auto boxed_cell = std::make_shared<cell_c>(cell_type_e::BOX);
+  auto boxed_cell = create_cell(cell_type_e::BOX);
   boxed_cell->inner_env = std::make_shared<environment_c>();
 
   //
@@ -51,13 +51,13 @@ void processor_c::load_package(cell_ptr cell, location_s *location,
   } catch (rll_wrapper_c::library_loading_error_c &e) {
     throw exceptions::runtime_c(
         "error loading `" + target + "`: " + e.what(),
-        std::make_shared<cell_c>(cell_type_e::STRING, "", location));
+        create_cell(cell_type_e::STRING, "", location));
   }
 
   if (!package_rll->is_loaded()) {
     throw exceptions::runtime_c(
         "failed to load library: `" + pkg.library_file + "`",
-        std::make_shared<cell_c>(cell_type_e::STRING, "", location));
+        create_cell(cell_type_e::STRING, "", location));
   }
 
   for (auto &f : pkg.library_function_list) {
@@ -65,15 +65,15 @@ void processor_c::load_package(cell_ptr cell, location_s *location,
       throw exceptions::runtime_c(
           "error loading `" + target + "`: listed function `" + f +
               "` was not found in `" + pkg.library_file.c_str() + "`",
-          std::make_shared<cell_c>(cell_type_e::STRING, "", location));
+          create_cell(cell_type_e::STRING, "", location));
     }
 
     void *fn_ptr = package_rll->get_symbol(f);
-    cell_c::proc_f fn = reinterpret_cast<cell_ptr (*)(
+    cell_c::proc_f fn = reinterpret_cast<cell_t (*)(
         cells_t &, std::shared_ptr<environment_c>)>(fn_ptr);
 
     // Add to env
-    boxed_cell->inner_env->set(f, std::make_shared<cell_c>(fn));
+    boxed_cell->inner_env->set(f, create_cell(fn));
   }
 
   //
@@ -87,7 +87,7 @@ void processor_c::load_package(cell_ptr cell, location_s *location,
     if (0 != file_executor.run(f)) {
       throw exceptions::runtime_c(
           "unable to open file " + std::string(f),
-          std::make_shared<cell_c>(cell_type_e::STRING, "", location));
+          create_cell(cell_type_e::STRING, "", location));
     }
   }
 

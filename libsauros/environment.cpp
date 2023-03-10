@@ -35,14 +35,14 @@ environment_c::environment_c(cells_t &params, cells_t &args,
   }
 }
 
-void environment_c::set(const std::string &item, cell_ptr cell) {
+void environment_c::set(const std::string &item, cell_t cell) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("environment_c::set");
 #endif
   _env[item] = cell;
 }
 
-cell_ptr &environment_c::get(const std::string &item) {
+cell_t &environment_c::get(const std::string &item) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("environment_c::get");
 #endif
@@ -50,7 +50,7 @@ cell_ptr &environment_c::get(const std::string &item) {
 }
 
 environment_c *environment_c::find(const std::string &var,
-                                   cell_ptr origin_cell) {
+                                   cell_t origin_cell) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("environment_c::find");
 #endif

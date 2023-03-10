@@ -42,7 +42,7 @@ public:
   //! using `get` \note If the item is not reachable within the current, or
   //! parent scope(s)
   //!       then the exception `unknown_identifier_c` will be thrown
-  environment_c *find(const std::string &item, cell_ptr origin_cell);
+  environment_c *find(const std::string &item, cell_t origin_cell);
 
   //! \brief Get an item
   //! \param item the item to get
@@ -50,14 +50,14 @@ public:
   //! \note This does not check for existence and can cause
   //!       an OOB error if the item does not exist -
   //!       `exists` or `find` should be used prior to this call
-  cell_ptr &get(const std::string &item);
+  cell_t &get(const std::string &item);
 
   //! \brief Set an item to a value
   //! \param item The item name to set
   //! \param cell The item data to set
   //! \post There will exist an item that maps the string to the cell
   //! \note If the item already exists, it will be overwritten
-  void set(const std::string &item, cell_ptr cell);
+  void set(const std::string &item, cell_t cell);
 
   //! \brief Retrieve a copy of the env map
   cell_map_t get_map() const { return _env; }
@@ -79,7 +79,7 @@ public:
 
   //! \brief Retrieve the last known good source location.
   //!        Used to help in error recovery
-  cell_ptr get_last_good_cell() const { return _last_good_cell; };
+  cell_t get_last_good_cell() const { return _last_good_cell; };
 
   void push_parent(std::shared_ptr<environment_c> outer);
 
@@ -89,7 +89,7 @@ private:
   std::shared_ptr<environment_c> _parent{nullptr};
   cell_map_t _env;
   rll_map _loaded_packages;
-  cell_ptr _last_good_cell{nullptr};
+  cell_t _last_good_cell{nullptr};
 };
 
 } // namespace sauros

@@ -100,8 +100,8 @@ public:
   };
 
   //! \brief Submit a segment to be analyzed
-  //! \returns cell_ptr once completed
-  std::optional<cell_ptr> submit(segment_s segment);
+  //! \returns cell_t once completed
+  std::optional<cell_t> submit(segment_s segment);
 
   //! \brief External indication that there
   //!        exists no more source
@@ -119,7 +119,7 @@ private:
 };
 
 //! \brief Parse a line
-extern cell_ptr
+extern cell_t
 parse_line(const char *source_descrption, //! Description of the source of the
                                           //! line (file, REPL, etc)
            std::size_t line_number,       //! The line number being parsed

@@ -14,7 +14,7 @@ processor_c::~processor_c() {
   }
 }
 
-void processor_c::cell_to_string(std::string &out, cell_ptr cell, env_ptr env,
+void processor_c::cell_to_string(std::string &out, cell_t cell, env_ptr env,
                                  bool show_space) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::cell_to_string");
@@ -78,7 +78,7 @@ void processor_c::cell_to_string(std::string &out, cell_ptr cell, env_ptr env,
   }
 }
 
-void processor_c::quote_cell(std::string &out, cell_ptr cell, env_ptr env) {
+void processor_c::quote_cell(std::string &out, cell_t cell, env_ptr env) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::quote_cell");
 #endif
@@ -152,7 +152,7 @@ void processor_c::quote_cell(std::string &out, cell_ptr cell, env_ptr env) {
   }
 }
 
-cell_ptr processor_c::process_list(cells_t &cells, env_ptr env) {
+cell_t processor_c::process_list(cells_t &cells, env_ptr env) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::process_list");
 #endif
@@ -161,7 +161,7 @@ cell_ptr processor_c::process_list(cells_t &cells, env_ptr env) {
   }
 
   if (cells.empty()) {
-    return std::make_shared<cell_c>(CELL_NIL);
+    return create_cell(CELL_NIL);
   }
 
   auto suspect_cell = cells[0];
@@ -211,7 +211,7 @@ cell_ptr processor_c::process_list(cells_t &cells, env_ptr env) {
   throw exceptions::runtime_c("Unknown cell type", cells[0]);
 }
 
-cell_ptr processor_c::process_cell(cell_ptr cell, env_ptr env) {
+cell_t processor_c::process_cell(cell_t cell, env_ptr env) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::process_cell");
 #endif
@@ -273,7 +273,7 @@ cell_ptr processor_c::process_cell(cell_ptr cell, env_ptr env) {
   throw exceptions::runtime_c("internal error -> no processable cell", cell);
 }
 
-cell_ptr processor_c::process_lambda(cell_ptr cell, cells_t &cells,
+cell_t processor_c::process_lambda(cell_t cell, cells_t &cells,
                                      env_ptr env) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::process_lambda");
@@ -292,8 +292,8 @@ cell_ptr processor_c::process_lambda(cell_ptr cell, cells_t &cells,
   }
 
   // Create the lambda cell
-  cell_ptr lambda_cell =
-      std::make_shared<cell_c>(cell_type_e::LAMBDA, cells[0]->location);
+  cell_t lambda_cell =
+      create_cell(cell_type_e::LAMBDA, cells[0]->location);
   lambda_cell->string = cells[0]->string;
   lambda_cell->type = cell->type;
   lambda_cell->list = cell->list[1]->list;
@@ -314,7 +314,7 @@ cell_ptr processor_c::process_lambda(cell_ptr cell, cells_t &cells,
 
 void processor_c::reset() { _yield_cell = nullptr; }
 
-cell_ptr processor_c::clone_box(cell_ptr cell) {
+cell_t processor_c::clone_box(cell_t cell) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::clone_box");
 #endif
@@ -324,11 +324,11 @@ cell_ptr processor_c::clone_box(cell_ptr cell) {
   for (auto [key, value] : cell->inner_env->get_map()) {
     new_box.inner_env->set(key, value->clone());
   }
-  return std::make_shared<cell_c>(new_box);
+  return create_cell(new_box);
 }
 
-std::tuple<cell_ptr, std::string, env_ptr>
-processor_c::retrieve_box_data(cell_ptr &cell,
+std::tuple<cell_t, std::string, env_ptr>
+processor_c::retrieve_box_data(cell_t &cell,
                                std::shared_ptr<environment_c> &env) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::retrieve_box_data");
@@ -346,7 +346,7 @@ processor_c::retrieve_box_data(cell_ptr &cell,
     }
   }
 
-  cell_ptr result;
+  cell_t result;
   std::shared_ptr<environment_c> moving_env = env;
   for (std::size_t i = 0; i < accessors.size(); i++) {
 
@@ -362,7 +362,7 @@ processor_c::retrieve_box_data(cell_ptr &cell,
   return {result, accessors.back(), moving_env};
 }
 
-cell_ptr processor_c::load_potential_variable(cell_ptr cell, env_ptr env) {
+cell_t processor_c::load_potential_variable(cell_t cell, env_ptr env) {
 #ifdef PROFILER_ENABLED
   profiler_c::get_profiler()->hit("processor_c::load_potential_variable");
 #endif

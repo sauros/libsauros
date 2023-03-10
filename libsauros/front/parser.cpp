@@ -140,9 +140,9 @@ void throw_no_list_error(token_c *current_token,
 }
 } // namespace
 
-cell_ptr parse(std::vector<token_c *> &tokens,
+cell_t parse(std::vector<token_c *> &tokens,
                std::shared_ptr<std::string> origin,
-               cell_ptr current_list = nullptr) {
+               cell_t current_list = nullptr) {
 
   if (tokens.empty()) {
     return {};
@@ -158,8 +158,10 @@ cell_ptr parse(std::vector<token_c *> &tokens,
   switch ((*current_token).token) {
 
   case token_e::L_BRACKET: {
-    cell_ptr new_list = std::make_shared<cell_c>(cell_type_e::LIST);
+    cell_t new_list = create_cell(cell_type_e::LIST);
     new_list->origin = origin;
+
+    new_list->list.reserve(10);
 
     // Populate the list
     parse(tokens, origin, new_list);
@@ -172,6 +174,10 @@ cell_ptr parse(std::vector<token_c *> &tokens,
 
       // otherwise we return the new list
     } else {
+
+
+      new_list->list.shrink_to_fit();
+
       return new_list;
     }
   }
@@ -197,7 +203,7 @@ cell_ptr parse(std::vector<token_c *> &tokens,
 
     auto str_tok = static_cast<string_token_c *>(current_token);
     current_list->list.push_back(
-        std::make_shared<cell_c>(cell_type_e::BOX_SYMBOL, (*str_tok).data,
+        create_cell(cell_type_e::BOX_SYMBOL, (*str_tok).data,
                                  new location_s((*str_tok).location), origin));
     return parse(tokens, origin, current_list);
   }
@@ -212,14 +218,14 @@ cell_ptr parse(std::vector<token_c *> &tokens,
     // Check the encoding map for builtins to see if we need to
     if (BUILTIN_STRING_TO_ENCODING.find((*str_tok).data) !=
         BUILTIN_STRING_TO_ENCODING.end()) {
-      cell_ptr builtin_translation_cell =
-          std::make_shared<cell_c>(cell_type_e::ENCODED_SYMBOL, (*str_tok).data,
+      cell_t builtin_translation_cell =
+          create_cell(cell_type_e::ENCODED_SYMBOL, (*str_tok).data,
                                    new location_s((*str_tok).location), origin);
       builtin_translation_cell->builtin_encoding =
           BUILTIN_STRING_TO_ENCODING[(*str_tok).data];
       current_list->list.push_back(builtin_translation_cell);
     } else {
-      current_list->list.push_back(std::make_shared<cell_c>(
+      current_list->list.push_back(create_cell(
           cell_type_e::SYMBOL, (*str_tok).data,
           new location_s((*str_tok).location), origin));
     }
@@ -234,7 +240,7 @@ cell_ptr parse(std::vector<token_c *> &tokens,
 
     auto str_tok = static_cast<string_token_c *>(current_token);
     current_list->list.push_back(
-        std::make_shared<cell_c>(cell_type_e::STRING, (*str_tok).data,
+        create_cell(cell_type_e::STRING, (*str_tok).data,
                                  new location_s((*str_tok).location), origin));
     return parse(tokens, origin, current_list);
   }
@@ -246,7 +252,7 @@ cell_ptr parse(std::vector<token_c *> &tokens,
     }
     auto int_tok = static_cast<integer_token_c *>(current_token);
     current_list->list.push_back(
-        std::make_shared<cell_c>(cell_type_e::INTEGER, (*int_tok).data,
+        create_cell(cell_type_e::INTEGER, (*int_tok).data,
                                  new location_s((*int_tok).location), origin));
     return parse(tokens, origin, current_list);
   }
@@ -259,7 +265,7 @@ cell_ptr parse(std::vector<token_c *> &tokens,
 
     auto real_tok = static_cast<real_token_c *>(current_token);
     current_list->list.push_back(
-        std::make_shared<cell_c>(cell_type_e::REAL, (*real_tok).data,
+        create_cell(cell_type_e::REAL, (*real_tok).data,
                                  new location_s((*real_tok).location), origin));
     return parse(tokens, origin, current_list);
   }
@@ -272,7 +278,7 @@ cell_ptr parse(std::vector<token_c *> &tokens,
   return {};
 }
 
-cell_ptr parse_line(const char *source_descrption, std::size_t line_number,
+cell_t parse_line(const char *source_descrption, std::size_t line_number,
                     std::string line) {
   bracket_track_s bts;
   auto tokens = tokenize(line_number, line, bts, nullptr);
@@ -283,7 +289,7 @@ void segment_parser_c::set_origin(const std::string &origin) {
   _origin = std::make_shared<std::string>(origin);
 }
 
-std::optional<cell_ptr>
+std::optional<cell_t>
 segment_parser_c::submit(segment_parser_c::segment_s segment) {
   parser::remove_comments(segment.line);
 
